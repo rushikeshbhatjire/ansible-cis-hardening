@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  author: Rushikesh Bhatjire
+  description: CIS Benchmark Hardening for Rocky Linux 9 (Level 1 & 2)
+  license: MIT
+  min_ansible_version: "2.14"
+  platforms:
+    - name: EL
+      versions:
+        - "9"
+  galaxy_tags:
+    - security
+    - hardening
+    - cis
+    - linux
+    - compliance
+dependencies: []

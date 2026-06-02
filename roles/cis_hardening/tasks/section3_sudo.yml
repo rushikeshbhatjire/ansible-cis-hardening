@@ -1,0 +1,19 @@
+---
+- name: "3.1 | Ensure sudo is installed"
+  dnf:
+    name: sudo
+    state: present
+
+- name: "3.2 | Ensure sudo commands use pty"
+  lineinfile:
+    path: /etc/sudoers
+    line: 'Defaults use_pty'
+    validate: 'visudo -cf %s'
+  when: cis_sudo_use_pty
+
+- name: "3.3 | Ensure sudo log file exists"
+  lineinfile:
+    path: /etc/sudoers
+    line: 'Defaults logfile="/var/log/sudo.log"'
+    validate: 'visudo -cf %s'
+  when: cis_sudo_log_enabled

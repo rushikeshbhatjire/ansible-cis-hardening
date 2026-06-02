@@ -1,0 +1,75 @@
+---
+- name: "7.1 | Disable IP forwarding"
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "0"
+    state: present
+    sysctl_set: true
+    reload: true
+  when: cis_disable_ip_forwarding
+
+- name: "7.2 | Disable packet redirect sending"
+  sysctl:
+    name: "{{ item }}"
+    value: "0"
+    state: present
+    sysctl_set: true
+    reload: true
+  loop:
+    - net.ipv4.conf.all.send_redirects
+    - net.ipv4.conf.default.send_redirects
+  when: cis_disable_packet_redirect
+
+- name: "7.3 | Enable reverse path filtering"
+  sysctl:
+    name: "{{ item }}"
+    value: "1"
+    state: present
+    sysctl_set: true
+    reload: true
+  loop:
+    - net.ipv4.conf.all.rp_filter
+    - net.ipv4.conf.default.rp_filter
+  when: cis_enable_reverse_path_filter
+
+- name: "7.4 | Ignore ICMP broadcast requests"
+  sysctl:
+    name: net.ipv4.icmp_echo_ignore_broadcasts
+    value: "1"
+    state: present
+    sysctl_set: true
+    reload: true
+  when: cis_ignore_icmp_broadcasts
+
+- name: "7.5 | Disable source routing"
+  sysctl:
+    name: "{{ item }}"
+    value: "0"
+    state: present
+    sysctl_set: true
+    reload: true
+  loop:
+    - net.ipv4.conf.all.accept_source_route
+    - net.ipv4.conf.default.accept_source_route
+  when: cis_disable_source_routing
+
+- name: "7.6 | Enable TCP syncookies"
+  sysctl:
+    name: net.ipv4.tcp_syncookies
+    value: "1"
+    state: present
+    sysctl_set: true
+    reload: true
+  when: cis_enable_tcp_syncookies
+
+- name: "7.7 | Enable martian packet logging"
+  sysctl:
+    name: "{{ item }}"
+    value: "1"
+    state: present
+    sysctl_set: true
+    reload: true
+  loop:
+    - net.ipv4.conf.all.log_martians
+    - net.ipv4.conf.default.log_martians
+  when: cis_enable_martian_logging

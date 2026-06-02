@@ -1,0 +1,11 @@
+---
+- import_tasks: section1_filesystem.yml
+- import_tasks: section2_patches.yml
+- import_tasks: section3_sudo.yml
+- import_tasks: section4_aide.yml
+- import_tasks: section6_process.yml
+- import_tasks: section7_network.yml
+- import_tasks: section8_firewall.yml
+- import_tasks: section9_audit.yml
+- import_tasks: section10_ssh.yml
+- import_tasks: section11_pam.yml

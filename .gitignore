@@ -1,0 +1,6 @@
+*.pem
+*.key
+*.retry
+inventory/hosts.ini
+.vault_pass
+*.log

@@ -1,0 +1,57 @@
+---
+- name: "9.1 | Ensure auditd is installed"
+  dnf:
+    name: audit
+    state: present
+  when: cis_enable_auditd
+
+- name: "9.2 | Ensure auditd is started and enabled"
+  service:
+    name: auditd
+    state: started
+    enabled: true
+  when: cis_enable_auditd
+
+- name: "9.3 | Set audit log retention"
+  lineinfile:
+    path: /etc/audit/auditd.conf
+    regexp: '^max_log_file_action'
+    line: 'max_log_file_action = keep_logs'
+    state: present
+  when: cis_enable_auditd
+
+- name: "9.4 | Audit login/logout events"
+  lineinfile:
+    path: /etc/audit/rules.d/cis.rules
+    line: "{{ item }}"
+    create: true
+    state: present
+  loop:
+    - "-w /var/log/lastlog -p wa -k logins"
+    - "-w /var/run/faillock -p wa -k logins"
+    - "-w /var/log/tallylog -p wa -k logins"
+  when: cis_enable_auditd
+
+- name: "9.5 | Audit sudoers changes"
+  lineinfile:
+    path: /etc/audit/rules.d/cis.rules
+    line: "{{ item }}"
+    create: true
+    state: present
+  loop:
+    - "-w /etc/sudoers -p wa -k sudoers"
+    - "-w /etc/sudoers.d/ -p wa -k sudoers"
+  when: cis_enable_auditd
+
+- name: "9.6 | Ensure rsyslog is installed"
+  dnf:
+    name: rsyslog
+    state: present
+  when: cis_enable_rsyslog
+
+- name: "9.7 | Ensure rsyslog is started and enabled"
+  service:
+    name: rsyslog
+    state: started
+    enabled: true
+  when: cis_enable_rsyslog

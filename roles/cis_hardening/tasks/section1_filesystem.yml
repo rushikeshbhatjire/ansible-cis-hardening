@@ -1,0 +1,45 @@
+---
+- name: "1.1.1 | Disable cramfs filesystem"
+  modprobe:
+    name: cramfs
+    state: absent
+  when: cis_disable_cramfs
+
+- name: "1.1.2 | Disable squashfs filesystem"
+  modprobe:
+    name: squashfs
+    state: absent
+  when: cis_disable_squashfs
+
+- name: "1.1.3 | Disable udf filesystem"
+  modprobe:
+    name: udf
+    state: absent
+  when: cis_disable_udf
+
+- name: "1.2.1 | Ensure /tmp is configured with nodev"
+  mount:
+    path: /tmp
+    opts: "{{ 'nodev,' if cis_enable_tmp_nodev else '' }}{{ 'nosuid,' if cis_enable_tmp_nosuid else '' }}{{ 'noexec' if cis_enable_tmp_noexec else '' }}"
+    state: mounted
+    fstype: tmpfs
+    src: tmpfs
+  when: cis_enable_tmp_nodev or cis_enable_tmp_nosuid or cis_enable_tmp_noexec
+
+- name: "1.2.2 | Ensure /dev/shm is configured with nodev,nosuid,noexec"
+  mount:
+    path: /dev/shm
+    opts: "{{ 'nodev,' if cis_enable_dev_shm_nodev else '' }}{{ 'nosuid,' if cis_enable_dev_shm_nosuid else '' }}{{ 'noexec' if cis_enable_dev_shm_noexec else '' }}"
+    state: mounted
+    fstype: tmpfs
+    src: tmpfs
+  when: cis_enable_dev_shm_nodev or cis_enable_dev_shm_nosuid or cis_enable_dev_shm_noexec
+
+- name: "1.2.3 | Ensure /var/tmp is configured with nodev,nosuid,noexec"
+  mount:
+    path: /var/tmp
+    opts: "{{ 'nodev,' if cis_enable_var_tmp_nodev else '' }}{{ 'nosuid,' if cis_enable_var_tmp_nosuid else '' }}{{ 'noexec' if cis_enable_var_tmp_noexec else '' }}"
+    state: mounted
+    fstype: tmpfs
+    src: tmpfs
+  when: cis_enable_var_tmp_nodev or cis_enable_var_tmp_nosuid or cis_enable_var_tmp_noexec

@@ -1,0 +1,7 @@
+---
+- name: CIS Hardening - Rocky Linux 9
+  hosts: cis_targets
+  become: true
+  gather_facts: true
+  roles:
+    - cis_hardening

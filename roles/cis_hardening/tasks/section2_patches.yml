@@ -1,0 +1,33 @@
+---
+- name: "2.1 | Ensure GPG check is enabled for all repos"
+  ini_file:
+    dest: /etc/dnf/dnf.conf
+    section: main
+    option: gpgcheck
+    value: "1"
+    mode: '0644'
+  when: cis_enable_gpgcheck
+
+- name: "2.2 | Ensure dnf-automatic is installed"
+  dnf:
+    name: dnf-automatic
+    state: present
+  when: cis_enable_auto_updates
+  register: dnf_automatic_installed
+
+- name: "2.3 | Ensure auto updates are enabled"
+  service:
+    name: dnf-automatic.timer
+    state: started
+    enabled: true
+  when:
+    - cis_enable_auto_updates
+    - not ansible_check_mode
+
+- name: "2.4 | Ensure system packages are up to date"
+  dnf:
+    name: "*"
+    state: latest
+  when:
+    - cis_enable_auto_updates
+    - not ansible_check_mode

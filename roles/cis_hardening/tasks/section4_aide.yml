@@ -1,0 +1,27 @@
+---
+- name: "4.1 | Ensure AIDE is installed"
+  dnf:
+    name: aide
+    state: present
+  when: cis_install_aide
+
+- name: "4.2 | Initialize AIDE database"
+  command: aide --init
+  args:
+    creates: /var/lib/aide/aide.db.new.gz
+  when: cis_install_aide
+
+- name: "4.3 | Move AIDE database into place"
+  command: mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+  args:
+    creates: /var/lib/aide/aide.db.gz
+  when: cis_install_aide
+
+- name: "4.4 | Schedule AIDE daily check via cron"
+  cron:
+    name: "CIS AIDE integrity check"
+    minute: "0"
+    hour: "5"
+    job: "/usr/sbin/aide --check | mail -s 'AIDE Integrity Report' root"
+    state: present
+  when: cis_install_aide and cis_aide_cron_enabled

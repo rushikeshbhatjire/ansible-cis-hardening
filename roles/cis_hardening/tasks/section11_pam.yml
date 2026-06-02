@@ -1,0 +1,40 @@
+---
+- name: "11.1 | Ensure password hashing algorithm is SHA-512"
+  lineinfile:
+    path: /etc/login.defs
+    regexp: '^ENCRYPT_METHOD'
+    line: 'ENCRYPT_METHOD SHA512'
+    state: present
+
+- name: "11.2 | Set password minimum days"
+  lineinfile:
+    path: /etc/login.defs
+    regexp: '^PASS_MIN_DAYS'
+    line: "PASS_MIN_DAYS {{ cis_password_min_days }}"
+    state: present
+
+- name: "11.3 | Set password maximum days"
+  lineinfile:
+    path: /etc/login.defs
+    regexp: '^PASS_MAX_DAYS'
+    line: "PASS_MAX_DAYS {{ cis_password_max_days }}"
+    state: present
+
+- name: "11.4 | Set password warning days"
+  lineinfile:
+    path: /etc/login.defs
+    regexp: '^PASS_WARN_AGE'
+    line: "PASS_WARN_AGE {{ cis_password_warn_days }}"
+    state: present
+
+- name: "11.5 | Ensure account lockout is configured"
+  lineinfile:
+    path: /etc/security/faillock.conf
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+    create: true
+  loop:
+    - { regexp: '^deny', line: "deny = {{ cis_lockout_attempts }}" }
+    - { regexp: '^unlock_time', line: "unlock_time = {{ cis_lockout_duration }}" }
+    - { regexp: '^fail_interval', line: "fail_interval = 900" }

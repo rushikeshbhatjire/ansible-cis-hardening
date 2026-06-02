@@ -1,0 +1,34 @@
+---
+- name: "6.1 | Disable core dumps"
+  sysctl:
+    name: fs.suid_dumpable
+    value: "0"
+    state: present
+    sysctl_set: true
+    reload: true
+  when: cis_disable_core_dumps
+
+- name: "6.2 | Ensure core dump limits in limits.conf"
+  lineinfile:
+    path: /etc/security/limits.conf
+    line: "* hard core 0"
+    state: present
+  when: cis_disable_core_dumps
+
+- name: "6.3 | Enable ASLR"
+  sysctl:
+    name: kernel.randomize_va_space
+    value: "2"
+    state: present
+    sysctl_set: true
+    reload: true
+  when: cis_enable_aslr
+
+- name: "6.4 | Restrict ptrace scope (Level 2)"
+  sysctl:
+    name: kernel.yama.ptrace_scope
+    value: "1"
+    state: present
+    sysctl_set: true
+    reload: true
+  when: cis_disable_ptrace

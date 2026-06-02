@@ -1,0 +1,38 @@
+---
+- name: "10.1 | Ensure SSH config options are set"
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+    validate: 'sshd -t -f %s'
+  loop:
+    - { regexp: '^#?PermitRootLogin', line: "PermitRootLogin {{ cis_ssh_permit_root_login }}" }
+    - { regexp: '^#?MaxAuthTries', line: "MaxAuthTries {{ cis_ssh_max_auth_tries }}" }
+    - { regexp: '^#?ClientAliveInterval', line: "ClientAliveInterval {{ cis_ssh_client_alive_interval }}" }
+    - { regexp: '^#?ClientAliveCountMax', line: "ClientAliveCountMax {{ cis_ssh_client_alive_count_max }}" }
+    - { regexp: '^#?LoginGraceTime', line: "LoginGraceTime {{ cis_ssh_login_grace_time }}" }
+    - { regexp: '^#?PermitEmptyPasswords', line: "PermitEmptyPasswords {{ cis_ssh_permit_empty_passwords }}" }
+    - { regexp: '^#?PermitUserEnvironment', line: "PermitUserEnvironment {{ cis_ssh_permit_user_environment }}" }
+    - { regexp: '^#?AllowTcpForwarding', line: "AllowTcpForwarding {{ cis_ssh_allow_tcp_forwarding }}" }
+    - { regexp: '^#?X11Forwarding', line: "X11Forwarding {{ cis_ssh_x11_forwarding }}" }
+    - { regexp: '^#?MaxSessions', line: "MaxSessions {{ cis_ssh_max_sessions }}" }
+  notify: restart sshd
+
+- name: "10.2 | Set SSH LogLevel to INFO"
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?LogLevel'
+    line: 'LogLevel INFO'
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: restart sshd
+
+- name: "10.3 | Disable SSH protocol 1 (set Protocol 2)"
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?Protocol'
+    line: 'Protocol 2'
+    state: present
+    validate: 'sshd -t -f %s'
+  notify: restart sshd
